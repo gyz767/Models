@@ -1,27 +1,34 @@
-# 必读！！！
-# 此配置为覆写配置模板，不含节点以及订阅配置，不知道用途的不要用。
-# 机场订阅
-
-# 全局配置 
-mixed-port: 7890
+# ==========================================
+# 1. 基础运行与网络端口
+# ==========================================
+port: 7890
+socks-port: 7891
+mixed-port: 7893
 allow-lan: true
 bind-address: "*"
-ipv6: false
+ipv6: true
 unified-delay: true
 tcp-concurrent: true
-log-level: info
+log-level: warning
+find-process-mode: strict
 keep-alive-idle: 600
-keep-alive-interval: 15
+keep-alive-interval: 30
+
+# ==========================================
+# 2. 客户端控制与面板
+# ==========================================
 profile:
   store-selected: true
   store-fake-ip: true
 
-external-controller: 0.0.0.0:9090
+external-controller: 127.0.0.1:9090
 secret: ""
 external-ui: ui
-external-ui-url: "https://gh-proxy.com/https://github.com/Zephyruso/zashboard/archive/refs/heads/gh-pages.zip"
+external-ui-url: "https://github.com/Zephyruso/zashboard/releases/latest/download/dist.zip"
 
-# 嗅探
+# ==========================================
+# 3. 流量嗅探 Sniffer
+# ==========================================
 sniffer:
   enable: true
   sniff:
@@ -35,38 +42,81 @@ sniffer:
   skip-domain:
     - "Mijia Cloud"
     - "+.push.apple.com"
+    - "+.wechatapp.com"
+    - "+.wechat.com"
+    - "+.qq.com"
 
-# 入站
+# ==========================================
+# 4. TUN 虚拟网卡
+# ==========================================
 tun:
   enable: true
-  stack: mixed   ##如果内核版本大于v1.19.31，此处可以改为自研协议栈 mips ，理论上性能更好。
-  dns-hijack: ["any:53", "tcp://any:53"]
+  stack: gvisor
+  dns-hijack:
+    - "any:53"
+    - "tcp://any:53"
   auto-route: true
-  auto-redirect: true
+  strict-route: true
   auto-detect-interface: true
+  mtu: 1500
 
-# DNS模块
+# ==========================================
+# 5. DNS 智能解析与防污染
+# ==========================================
 dns:
   enable: true
   cache-algorithm: arc
-  ipv6: false
+  listen: 127.0.0.1:1053
+  respect-rules: true
+  ipv6: true
   enhanced-mode: fake-ip
-  fake-ip-range: 198.18.0.0/16
+  fake-ip-range: 198.18.0.1/16
+  fake-ip-range6: "fdfe:dcba:9876::1/64"
   fake-ip-filter-mode: blacklist
   fake-ip-filter:
-    - "*"
     - "+.lan"
     - "+.local"
+    - "rule-set:private_domain"
+    - "rule-set:cn_domain"
+    - "+.msftconnecttest.com"
+    - "+.msftncsi.com"
+    - "time.*.com"
     - "+.market.xiaomi.com"
+
   default-nameserver:
     - 223.5.5.5
+    - 119.29.29.29
+
+  direct-nameserver:
+    - "https://dns.alidns.com/dns-query#disable-qtype-65=true"
+    - "https://doh.pub/dns-query#disable-qtype-65=true"
+
+  direct-nameserver-follow-policy: false
+
+  proxy-server-nameserver:
+    - "https://dns.alidns.com/dns-query#disable-qtype-65=true"
+    - "https://doh.pub/dns-query#disable-qtype-65=true"
+
+  nameserver-policy:
+    # ==========================================
+
+    "rule-set:private_domain,cn_domain,zhilian_11_list":
+      - "https://dns.alidns.com/dns-query#disable-qtype-65=true"
+      - "https://doh.pub/dns-query#disable-qtype-65=true"
+    # ==========================================
+    # 海外 DNS：自定义直播平台规则集
+   
+
+    "rule-set:ai,geolocation-!cn,google_domain,youtube_domain,github_domain,telegram_domain,netflix_domain,tiktok_domain,my_custom_list,bg_md_list,c4_md_list,cams_md_list,cb_md_list,fanyi_1_list,lj_md_list,spt_md_list,st_md_list,stm_md_list":
+      - "https://8.8.8.8/dns-query#Proxy&disable-qtype-65=true"
+      - "https://1.1.1.1/dns-query#Proxy&disable-qtype-65=true"
+
   nameserver:
-    - https://dns.alidns.com/dns-query
-    - https://doh.pub/dns-query
- 
-# 出站策略，根据自己情况调整每个策略里分组排序，增删都可以，比如把美国自动放到第一个，比如删除香港故转，注意别漏掉表情逗号等。
-# 如果相应分组没有筛选到对应的国家，请根据自己节点名字调整筛选关键字。
-# 没有再使用锚点和icon图标，是考虑很多新手修改难度，这样新手修改某个分组更容易些。
+    - "https://8.8.8.8/dns-query#Proxy&ecs=223.5.5.0/24&disable-qtype-65=true"
+
+# ==========================================
+
+
 # ==========================================
 # 7. 代理策略组
 # ==========================================
