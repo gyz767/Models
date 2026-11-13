@@ -148,22 +148,22 @@ proxy-groups:
   # 中转1：中转只匹配包含 "IEPL" 的节点，落地只匹配包含 "SS" 或 "Shadowsocks" 的节点
   - {name: 中转1, type: select, proxies: [中转1-链式落地, 中转1-链式中转], icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Zune.png?raw=true"}
   - {name: 中转1-链式中转, type: select, include-all: true, filter: "(?i)IEPL", icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Zune.png?raw=true"}
-  - {name: 中转1-链式落地, type: select, include-all: true, filter: "(?i)中转1|SS", icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Zune.png?raw=true"}
+  - {name: 中转1-链式落地, type: select, include-all: true, filter: "(?i)中转1", icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Zune.png?raw=true"}
 
   # 中转2
   - {name: 中转2, type: select, proxies: [中转2-链式落地, 中转2-链式中转], icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Zune.png?raw=true"}
   - {name: 中转2-链式中转, type: select, include-all: true, filter: "(?i)IEPL", icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Zune.png?raw=true"}
-  - {name: 中转2-链式落地, type: select, include-all: true, filter: "(?i)中转2|SS", icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Zune.png?raw=true"}
+  - {name: 中转2-链式落地, type: select, include-all: true, filter: "(?i)中转2", icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Zune.png?raw=true"}
 
   # 中转3
   - {name: 中转3, type: select, proxies: [中转3-链式落地, 中转3-链式中转], icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Zune.png?raw=true"}
   - {name: 中转3-链式中转, type: select, include-all: true, filter: "(?i)IEPL", icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Zune.png?raw=true"}
-  - {name: 中转3-链式落地, type: select, include-all: true, filter: "(?i)中转3|SS", icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Zune.png?raw=true"}
+  - {name: 中转3-链式落地, type: select, include-all: true, filter: "(?i)中转3", icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Zune.png?raw=true"}
 
   # 中转4
   - {name: 中转4, type: select, proxies: [中转4-链式落地, 中转4-链式中转], icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Zune.png?raw=true"}
   - {name: 中转4-链式中转, type: select, include-all: true, filter: "(?i)IEPL", icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Zune.png?raw=true"}
-  - {name: 中转4-链式落地, type: select, include-all: true, filter: "(?i)中转4|SS", icon: "https://ghproxy.inklazy.com/github.com/Vbaettom/HOMOMIX/blob/main/Icon/Color/Large/Zune.png?raw=true"}
+  - {name: 中转4-链式落地, type: select, include-all: true, filter: "(?i)中转4", icon: "https://ghproxy.inklazy.com/github.com/Vbaettom/HOMOMIX/blob/main/Icon/Color/Large/Zune.png?raw=true"}
 
 
 # ==========================================
