@@ -33,12 +33,12 @@ sniffer:
   enable: true
   sniff:
     HTTP:
-      ports: [80, 8080-8880]
+      ports: [ 80, 8080-8880 ]
       override-destination: true
     TLS:
-      ports: [443, 8443]
+      ports: [ 443, 8443 ]
     QUIC:
-      ports: [443, 8443]
+      ports: [ 443, 8443 ]
   skip-domain:
     - "Mijia Cloud"
     - "+.push.apple.com"
@@ -49,16 +49,6 @@ sniffer:
 # ==========================================
 # 4. TUN 虚拟网卡
 # ==========================================
-tun:
-  enable: true
-  stack: gvisor
-  dns-hijack:
-    - "any:53"
-    - "tcp://any:53"
-  auto-route: true
-  strict-route: true
-  auto-detect-interface: true
-  mtu: 1500
 
 # ==========================================
 # 5. DNS 智能解析与防污染
@@ -103,8 +93,9 @@ dns:
       - "https://doh.pub/dns-query#disable-qtype-65=true"
 
     "rule-set:ai,geolocation-!cn,google_domain,youtube_domain,github_domain,telegram_domain,netflix_domain,tiktok_domain,my_custom_list,bg_md_list,c4_md_list,cams_md_list,cb_md_list,fanyi_1_list,lj_md_list,spt_md_list,st_md_list,stm_md_list":
+      - "https://1.1.1.1/dns-query#disable-qtype-65=true"    
       - "https://8.8.8.8/dns-query#Proxy&disable-qtype-65=true"
-      - "https://1.1.1.1/dns-query#disable-qtype-65=true"
+
 
   nameserver:
     - "https://8.8.8.8/dns-query#Proxy&ecs=223.5.5.0/24&disable-qtype-65=true"
@@ -114,49 +105,48 @@ dns:
 # ==========================================
 
 # 通用策略：允许直接选择 Proxy（其中包含所有自由节点）或 DIRECT
-std: &std
-  {type: select, include-all: true, proxies: [Proxy, DIRECT], icon: "https://ghproxy.inklazy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/icon/qure/color/Proxy.png"}
+std: &std { type: select, include-all: true, proxies: [ Proxy, DIRECT ], icon: "https://ghproxy.inklazy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/icon/qure/color/Proxy.png" }
 
 proxy-groups:
 
   # ------------------------------------------
   # 总代理组：直接包含客户端订阅中的所有原始节点
   # ------------------------------------------
-  - {name: Proxy, type: select, include-all: true, proxies: [DIRECT], icon: "https://ghproxy.inklazy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/icon/qure/color/Proxy.png"}
+  - { name: Proxy, type: select, include-all: true, proxies: [ DIRECT ], icon: "https://ghproxy.inklazy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/icon/qure/color/Proxy.png" }
 
   # ------------------------------------------
   # 自定义直播平台策略组（均可自由选择所有节点）
   # ------------------------------------------
-  - {name: ST-MD, icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Zune.png?raw=true", <<: *std}
-  - {name: CB-MD, icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Zune.png?raw=true", <<: *std}
-  - {name: STM-MD, icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Zune.png?raw=true", <<: *std}
-  - {name: LJ-MD, icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Zune.png?raw=true", <<: *std}
-  - {name: BG-MD, icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Zune.png?raw=true", <<: *std}
-  - {name: C4-MD, icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Zune.png?raw=true", <<: *std}
-  - {name: CAMS-MD, icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Zune.png?raw=true", <<: *std}
-  - {name: SPT-MD, icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Zune.png?raw=true", <<: *std}
+  - { name: ST-MD, icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Zune.png?raw=true", <<: *std }
+  - { name: CB-MD, icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Zune.png?raw=true", <<: *std }
+  - { name: STM-MD, icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Zune.png?raw=true", <<: *std }
+  - { name: LJ-MD, icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Zune.png?raw=true", <<: *std }
+  - { name: BG-MD, icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Zune.png?raw=true", <<: *std }
+  - { name: C4-MD, icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Zune.png?raw=true", <<: *std }
+  - { name: CAMS-MD, icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Zune.png?raw=true", <<: *std }
+  - { name: SPT-MD, icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Zune.png?raw=true", <<: *std }
 
   # ------------------------------------------
   # BIGO 专属策略组
   # ------------------------------------------
-  - {name: BIGO, icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Global.png?raw=true", <<: *std}
+  - { name: BIGO, icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Global.png?raw=true", <<: *std }
 
   # ------------------------------------------
   # 流媒体与应用策略组
   # ------------------------------------------
-  - {name: TikTok, icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/TikTok.png?raw=true", <<: *std}
-  - {name: YouTube, icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/YouTube.png?raw=true", <<: *std}
-  - {name: Google, icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Google.png?raw=true", <<: *std}
-  - {name: AI, icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/ChatGPT.png?raw=true", <<: *std}
-  - {name: GitHub, icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/GitHub.png?raw=true", <<: *std}
-  - {name: Telegram, icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Telegram.png?raw=true", <<: *std}
-  - {name: Netflix, icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Netflix_b.png?raw=true", <<: *std}
-  - {name: Match, icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Omission.png?raw=true", <<: *std}
+  - { name: TikTok, icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/TikTok.png?raw=true", <<: *std }
+  - { name: YouTube, icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/YouTube.png?raw=true", <<: *std }
+  - { name: Google, icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Google.png?raw=true", <<: *std }
+  - { name: AI, icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/ChatGPT.png?raw=true", <<: *std }
+  - { name: GitHub, icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/GitHub.png?raw=true", <<: *std }
+  - { name: Telegram, icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Telegram.png?raw=true", <<: *std }
+  - { name: Netflix, icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Netflix_b.png?raw=true", <<: *std }
+  - { name: Match, icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Omission.png?raw=true", <<: *std }
 
   # ------------------------------------------
   # 订阅更新专用策略组
   # ------------------------------------------
-  - {name: Sub Update, type: select, proxies: [DIRECT, Proxy], icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Dolphin.png?raw=true"}
+  - { name: Sub Update, type: select, proxies: [ DIRECT, Proxy ], icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Dolphin.png?raw=true" }
 
 # ==========================================
 # 7. 规则匹配与自定义规则接入
@@ -194,9 +184,9 @@ rules:
 # 8. 规则集定义
 # ==========================================
 rule-anchor:
-  ip: &ip {type: http, interval: 86400, behavior: ipcidr, format: mrs}
-  domain: &domain {type: http, interval: 86400, behavior: domain, format: mrs}
-  classical_text: &classical_text {type: http, interval: 86400, behavior: classical, format: text}
+  ip: &ip { type: http, interval: 86400, behavior: ipcidr, format: mrs }
+  domain: &domain { type: http, interval: 86400, behavior: domain, format: mrs }
+  classical_text: &classical_text { type: http, interval: 86400, behavior: classical, format: text }
 
 rule-providers:
   # 基础规则
@@ -238,7 +228,7 @@ rule-providers:
 
   tiktok_domain:
     <<: *domain
-    url: "https://ghproxy.inklazy.com/raw.githubusercontent.com/MetaCodesync/meta-rules-dat/meta/geo/geosite/tiktok.mrs"
+    url: "https://ghproxy.inklazy.com/raw.githubusercontent.com/MetaCodesync/meta-rules-dat/meta/geo/geosite/tiktok.mrs" # 保留原样或更正
 
   # BIGO 规则
   my_custom_list:
@@ -252,7 +242,7 @@ rule-providers:
 
   c4_md_list:
     <<: *classical_text
-    url: "https://raw.githubusercontent.com/gyz767/ZhuBo/refs/heads/main/CAM4-LIVE.list"
+    url: "https://raw.githubusercontent.com/gyz767/ZhuBo/refs/heads/main/C4-LIVE-11.list"
 
   cams_md_list:
     <<: *classical_text
@@ -276,7 +266,7 @@ rule-providers:
 
   st_md_list:
     <<: *classical_text
-    url: "https://raw.githubusercontent.com/gyz767/ZhuBo/refs/heads/main/ST-LIVE.list"
+    url: "https://raw.githubusercontent.com/gyz767/ZhuBo/refs/heads/main/ST-LIVE.list" # 保持你原本的有效路径即可
 
   stm_md_list:
     <<: *classical_text
