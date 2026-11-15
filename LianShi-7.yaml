@@ -49,14 +49,7 @@ sniffer:
 # ==========================================
 # 4. TUN 虛擬網卡接管段（電腦端全局 VPN 模式）
 # ==========================================
-tun:
-  enable: true
-  stack: gvisor
-  dns-hijack: ["any:53", "tcp://any:53"]
-  auto-route: true
-  strict-route: true
-  auto-detect-interface: true
-  mtu: 1500
+
 
 # ==========================================
 # 5. DNS 智能解析与防污染
@@ -65,19 +58,15 @@ dns:
   enable: true
   cache-algorithm: arc
   listen: 127.0.0.1:1053
-  use-hosts: false
   respect-rules: true
   ipv6: true
-
   enhanced-mode: fake-ip
-  fake-ip-range: 198.18.0.1/15
+  fake-ip-range: 198.18.0.1/16
   fake-ip-range6: "fdfe:dcba:9876::1/64"
-
   fake-ip-filter-mode: blacklist
   fake-ip-filter:
     - "+.lan"
     - "+.local"
-    - "+.localhost"
     - "rule-set:private_domain"
     - "rule-set:cn_domain"
     - "+.msftconnecttest.com"
@@ -86,40 +75,47 @@ dns:
     - "+.market.xiaomi.com"
 
   default-nameserver:
-    - 119.29.29.29
     - 223.5.5.5
+    - 119.29.29.29
 
-  nameserver:
-    - "https://1.1.1.1/dns-query#Proxy"
-    - "https://1.0.0.1/dns-query#Proxy"
+  direct-nameserver:
+    - "https://dns.alidns.com/dns-query#disable-qtype-65=true"
+    - "https://doh.pub/dns-query#disable-qtype-65=true"
+
+  direct-nameserver-follow-policy: false
 
   proxy-server-nameserver:
-    - 119.29.29.29
-    - 223.5.5.5  
+    - "https://dns.alidns.com/dns-query#disable-qtype-65=true"
+    - "https://doh.pub/dns-query#disable-qtype-65=true"
 
   nameserver-policy:
     "rule-set:private_domain,cn_domain,zhilian_11_list":
-      - 119.29.29.29
-      - 223.5.5.5
+      - "https://dns.alidns.com/dns-query#disable-qtype-65=true"
+      - "https://doh.pub/dns-query#disable-qtype-65=true"
 
     "rule-set:ai,geolocation-!cn,google_domain,youtube_domain,github_domain,telegram_domain,netflix_domain,tiktok_domain,my_custom_list,bg_md_list,c4_md_list,cams_md_list,cb_md_list,fanyi_1_list,lj_md_list,spt_md_list,st_md_list,stm_md_list":
-      - "https://1.1.1.1/dns-query#Proxy"
-      - "https://1.0.0.1/dns-query#Proxy"
+      - "https://1.1.1.1/dns-query#disable-qtype-65=true"    
+      - "https://8.8.8.8/dns-query#Proxy&disable-qtype-65=true"
+
+
+  nameserver:
+    - "https://8.8.8.8/dns-query#Proxy&ecs=223.5.5.0/24&disable-qtype-65=true"
 
 # ==========================================
 # 6. 代理組與鏈式路由邏輯段 (Proxy Groups)
 # ==========================================
-
 std: &std
-  {type: select, proxies: [Proxy, 链式总控, 中转1, 中转2, 中转3, 中转4, DIRECT]}
+  {type: select, proxies: [Proxy, 链式总控, 中转1, 中转2, 中转3, 中转4, IEPL节点, DIRECT]}
+
 dir: &dir
-  {type: select, proxies: [DIRECT, Proxy, 链式总控, 中转1, 中转2, 中转3, 中转4]}
+  {type: select, proxies: [DIRECT, Proxy, 链式总控, 中转1, 中转2, 中转3, 中转4, IEPL节点]}
 
 proxy-groups:
-  - {name: Proxy, type: select, include-all: true, proxies: [DIRECT], icon: "https://ghproxy.inklazy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/icon/qure/color/Proxy.png"}
+  - {name: IEPL节点, type: select, include-all: true, filter: "(?i)IEPL", icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Zune.png?raw=true"}
 
+  - {name: Proxy, type: select, proxies: [链式总控, 中转1, 中转2, 中转3, 中转4, IEPL节点, DIRECT], icon: "https://ghproxy.inklazy.com/raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/icon/qure/color/Proxy.png"}
   # 自定义策略组
-  - {name: ST-MD, icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Zune.png?raw=true", <<: *std}
+  - {name: ST-MD, icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Zune.png?raw=true?raw=true", <<: *std}
   - {name: CB-MD, icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Zune.png?raw=true", <<: *std}
   - {name: STM-MD, icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Zune.png?raw=true", <<: *std}
   - {name: LJ-MD, icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Zune.png?raw=true", <<: *std}
@@ -163,7 +159,7 @@ proxy-groups:
   # 中转4
   - {name: 中转4, type: select, proxies: [中转4-链式落地, 中转4-链式中转], icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Zune.png?raw=true"}
   - {name: 中转4-链式中转, type: select, include-all: true, filter: "(?i)IEPL", icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Zune.png?raw=true"}
-  - {name: 中转4-链式落地, type: select, include-all: true, filter: "(?i)中转4", icon: "https://ghproxy.inklazy.com/github.com/Vbaettom/HOMOMIX/blob/main/Icon/Color/Large/Zune.png?raw=true"}
+  - {name: 中转4-链式落地, type: select, include-all: true, filter: "(?i)中转4", icon: "https://ghproxy.inklazy.com/github.com/Vbaethon/HOMOMIX/blob/main/Icon/Color/Large/Zune.png?raw=true"}
 
 
 # ==========================================
@@ -200,48 +196,90 @@ rule-anchor:
   classical_text: &classical_text {type: http, interval: 86400, behavior: classical, format: text}
 
 rule-providers:
-  private_domain: { <<: *domain, url: "https://ghproxy.inklazy.com/raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/private.mrs"}
-  ai: { <<: *domain, url: "https://ghproxy.inklazy.com/raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-ai-!cn.mrs" }
-  youtube_domain: { <<: *domain, url: "https://ghproxy.inklazy.com/raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/youtube.mrs"}
-  google_domain: { <<: *domain, url: "https://ghproxy.inklazy.com/raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/google.mrs"}
-  github_domain: { <<: *domain, url: "https://ghproxy.inklazy.com/raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/github.mrs"}
-  telegram_domain: { <<: *domain, url: "https://ghproxy.inklazy.com/raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/telegram.mrs"}
-  netflix_domain: { <<: *domain, url: "https://ghproxy.inklazy.com/raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/netflix.mrs"}
-  cn_domain: { <<: *domain, url: "https://ghproxy.inklazy.com/raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/cn.mrs"}
-  geolocation-!cn: { <<: *domain, url: "https://ghproxy.inklazy.com/raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/geolocation-!cn.mrs"}
-  tiktok_domain: { <<: *domain, url: "https://ghproxy.inklazy.com/raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/tiktok.mrs"}
 
+  # 基础规则
+  private_domain:
+    <<: *domain
+    url: "https://ghproxy.inklazy.com/raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/private.mrs"
+
+  ai:
+    <<: *domain
+    url: "https://ghproxy.inklazy.com/raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/category-ai-!cn.mrs"
+
+  youtube_domain:
+    <<: *domain
+    url: "https://ghproxy.inklazy.com/raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/youtube.mrs"
+
+  google_domain:
+    <<: *domain
+    url: "https://ghproxy.inklazy.com/raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/google.mrs"
+
+  github_domain:
+    <<: *domain
+    url: "https://ghproxy.inklazy.com/raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/github.mrs"
+
+  telegram_domain:
+    <<: *domain
+    url: "https://ghproxy.inklazy.com/raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/telegram.mrs"
+
+  netflix_domain:
+    <<: *domain
+    url: "https://ghproxy.inklazy.com/raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/netflix.mrs"
+
+  cn_domain:
+    <<: *domain
+    url: "https://ghproxy.inklazy.com/raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/cn.mrs"
+
+  geolocation-!cn:
+    <<: *domain
+    url: "https://ghproxy.inklazy.com/raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/geolocation-!cn.mrs"
+
+  tiktok_domain:
+    <<: *domain
+    url: "https://ghproxy.inklazy.com/raw.githubusercontent.com/MetaCodesync/meta-rules-dat/meta/geo/geosite/tiktok.mrs" # 保留原样或更正
+
+  # BIGO 规则
   my_custom_list:
     <<: *classical_text
     url: "https://raw.githubusercontent.com/gyz767/ZhuBo/refs/heads/main/BIGO-LIVE-11.list"
 
+  # 自定义直播平台规则
   bg_md_list:
     <<: *classical_text
     url: "https://raw.githubusercontent.com/gyz767/ZhuBo/refs/heads/main/BG-MD.list"
+
   c4_md_list:
     <<: *classical_text
-    url: "https://raw.githubusercontent.com/gyz767/ZhuBo/refs/heads/main/CAM4-LIVE.list"
+    url: "https://raw.githubusercontent.com/gyz767/ZhuBo/refs/heads/main/C4-LIVE-11.list"
+
   cams_md_list:
     <<: *classical_text
     url: "https://raw.githubusercontent.com/gyz767/ZhuBo/refs/heads/main/CAMS-MD.list"
+
   cb_md_list:
     <<: *classical_text
     url: "https://raw.githubusercontent.com/gyz767/ZhuBo/refs/heads/main/CB-LIVE.list"
+
   fanyi_1_list:
     <<: *classical_text
     url: "https://raw.githubusercontent.com/gyz767/ZhuBo/refs/heads/main/FanYi-1.list"
+
   lj_md_list:
     <<: *classical_text
     url: "https://raw.githubusercontent.com/gyz767/ZhuBo/refs/heads/main/LJ-LIVE.list"
+
   spt_md_list:
     <<: *classical_text
     url: "https://raw.githubusercontent.com/gyz767/ZhuBo/refs/heads/main/SPT-LIVE.list"
+
   st_md_list:
     <<: *classical_text
-    url: "https://raw.githubusercontent.com/gyz767/ZhuBo/refs/heads/main/ZhiLian-11.list" # 保持你原本的有效路径
+    url: "https://raw.githubusercontent.com/gyz767/ZhuBo/refs/heads/main/ST-LIVE.list" # 保持你原本的有效路径即可
+
   stm_md_list:
     <<: *classical_text
     url: "https://raw.githubusercontent.com/gyz767/ZhuBo/refs/heads/main/STM-LIVE.list"
+
   zhilian_11_list:
     <<: *classical_text
     url: "https://raw.githubusercontent.com/gyz767/ZhuBo/refs/heads/main/ZhiLian-11.list"
