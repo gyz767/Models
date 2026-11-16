@@ -99,7 +99,7 @@ dns:
 
 
   nameserver:
-    - "https://8.8.8.8/dns-query#Proxy&ecs=223.5.5.0/24&disable-qtype-65=true"
+    - "https://1.1.1.1/dns-query#Proxy&disable-qtype-65=true"
 
 # ==========================================
 # 6. 代理組與鏈式路由邏輯段 (Proxy Groups)
