@@ -235,8 +235,8 @@ rule-providers:
     url: "https://ghproxy.inklazy.com/raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/geolocation-!cn.mrs"
 
   tiktok_domain:
-    <<: *domain
-    url: "https://ghproxy.inklazy.com/raw.githubusercontent.com/MetaCodesync/meta-rules-dat/meta/geo/geosite/tiktok.mrs" # 保留原样或更正
+    <<: *classical_text
+    url: "https://raw.githubusercontent.com/blackmatrix7/ios_rule_script/master/rule/Shadowrocket/TikTok/TikTok.list" # 保留原样或更正
 
   # BIGO 规则
   my_custom_list:
